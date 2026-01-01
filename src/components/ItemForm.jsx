@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { CATEGORIES, SIZES } from '../data/mockData';
 
-export function ItemForm({ initialData, onSave, onCancel }) {
+export function ItemForm({ initialData, onSave, onCancel, categories, sizes }) {
   const [formData, setFormData] = useState({
     name: '',
-    category: CATEGORIES[1], // Default to first actual category (skipping 'All')
-    size: SIZES[1],
+    category: categories[1] || '',
+    size: sizes[1] || '',
     price: ''
   });
 
@@ -47,7 +46,7 @@ export function ItemForm({ initialData, onSave, onCancel }) {
               value={formData.category}
               onChange={e => setFormData({...formData, category: e.target.value})}
             >
-              {CATEGORIES.filter(c => c !== 'All').map(c => (
+              {categories.filter(c => c !== 'All').map(c => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
@@ -65,7 +64,7 @@ export function ItemForm({ initialData, onSave, onCancel }) {
               value={formData.size}
               onChange={e => setFormData({...formData, size: e.target.value})}
             >
-               {SIZES.filter(s => s !== 'All').map(s => (
+               {sizes.filter(s => s !== 'All').map(s => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
@@ -109,4 +108,6 @@ ItemForm.propTypes = {
   initialData: PropTypes.object,
   onSave: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
+  categories: PropTypes.array.isRequired,
+  sizes: PropTypes.array.isRequired,
 };

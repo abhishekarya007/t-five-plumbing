@@ -1,9 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Package, Search, Plus, Moon, Sun } from 'lucide-react';
+import { Package, Search, Plus, Moon, Sun, Settings } from 'lucide-react';
 import { ItemCard } from './components/ItemCard';
 import { Modal } from './components/Modal';
 import { ItemForm } from './components/ItemForm';
-import { plumbingItems, CATEGORIES, SIZES } from './data/mockData';
+import { SettingsModal } from './components/SettingsModal';
+import { plumbingItems, CATEGORIES as DEFAULT_CATEGORIES, SIZES as DEFAULT_SIZES } from './data/mockData';
 
 function App() {
   // Theme Management
@@ -28,6 +29,25 @@ function App() {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
+  // Dynamic Categories & Sizes Management
+  const [categories, setCategories] = useState(() => {
+    const saved = localStorage.getItem('plumbo_categories');
+    return saved ? JSON.parse(saved) : DEFAULT_CATEGORIES;
+  });
+
+  const [sizes, setSizes] = useState(() => {
+    const saved = localStorage.getItem('plumbo_sizes');
+    return saved ? JSON.parse(saved) : DEFAULT_SIZES;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('plumbo_categories', JSON.stringify(categories));
+  }, [categories]);
+
+  useEffect(() => {
+    localStorage.setItem('plumbo_sizes', JSON.stringify(sizes));
+  }, [sizes]);
+
   // Load from local storage or use mock data
   const [items, setItems] = useState(() => {
     const saved = localStorage.getItem('plumbo_items');
@@ -39,6 +59,7 @@ function App() {
   const [selectedSize, setSelectedSize] = useState('All');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
   // Persist to local storage
@@ -88,6 +109,13 @@ function App() {
           </div>
           
           <div className="flex items-center gap-4">
+             <button 
+              onClick={() => setIsSettingsOpen(true)}
+              className="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700 transition-colors"
+              aria-label="Settings"
+            >
+              <Settings size={20} />
+            </button>
             <button 
               onClick={toggleTheme}
               className="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700 transition-colors"
@@ -127,7 +155,7 @@ function App() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="input-field py-3 pl-4 pr-10 appearance-none cursor-pointer hover:bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600"
               >
-                {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat} Categories</option>)}
+                {categories.map(cat => <option key={cat} value={cat}>{cat} Categories</option>)}
               </select>
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
@@ -140,7 +168,7 @@ function App() {
                 onChange={(e) => setSelectedSize(e.target.value)}
                 className="input-field py-3 pl-4 pr-10 appearance-none cursor-pointer hover:bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600"
               >
-                {SIZES.map(size => <option key={size} value={size}>{size}</option>)}
+                {sizes.map(size => <option key={size} value={size}>{size}</option>)}
               </select>
                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
@@ -173,8 +201,19 @@ function App() {
           initialData={editingItem} 
           onSave={handleSaveItem} 
           onCancel={() => setIsModalOpen(false)} 
+          categories={categories}
+          sizes={sizes}
         />
       </Modal>
+
+      <SettingsModal 
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        categories={categories}
+        setCategories={setCategories}
+        sizes={sizes}
+        setSizes={setSizes}
+      />
     </div>
   );
 }
