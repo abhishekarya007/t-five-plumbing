@@ -30,28 +30,69 @@ function App() {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  // Dynamic Categories & Sizes Management
-  const [categories, setCategories] = useState(() => {
-    const saved = localStorage.getItem('plumbo_categories');
-    return saved ? JSON.parse(saved) : DEFAULT_CATEGORIES;
-  });
-
-  const [sizes, setSizes] = useState(() => {
-    const saved = localStorage.getItem('plumbo_sizes');
-    return saved ? JSON.parse(saved) : DEFAULT_SIZES;
-  });
-
-  useEffect(() => {
-    localStorage.setItem('plumbo_categories', JSON.stringify(categories));
-  }, [categories]);
-
-  useEffect(() => {
-    localStorage.setItem('plumbo_sizes', JSON.stringify(sizes));
-  }, [sizes]);
-
   // Supabase Data Management
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Dynamic Categories & Sizes Management
+  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
+  const [sizes, setSizes] = useState(DEFAULT_SIZES);
+
+  const fetchSettings = async () => {
+    try {
+      const { data: catData } = await supabase.from('categories').select('name').order('name');
+      if (catData && catData.length > 0) {
+        setCategories(['All', ...catData.map(c => c.name)]);
+      }
+
+      const { data: sizeData } = await supabase.from('sizes').select('name').order('name');
+      if (sizeData && sizeData.length > 0) {
+        setSizes(['All', ...sizeData.map(s => s.name)]);
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error.message);
+    }
+  };
+
+  const handleAddCategory = async (name) => {
+    try {
+      const { error } = await supabase.from('categories').insert([{ name }]);
+      if (error) throw error;
+      fetchSettings();
+    } catch (error) {
+      alert(`Error adding category: ${error.message}`);
+    }
+  };
+
+  const handleDeleteCategory = async (name) => {
+    try {
+      const { error } = await supabase.from('categories').delete().eq('name', name);
+      if (error) throw error;
+      fetchSettings();
+    } catch (error) {
+      alert(`Error deleting category: ${error.message}`);
+    }
+  };
+
+  const handleAddSize = async (name) => {
+    try {
+      const { error } = await supabase.from('sizes').insert([{ name }]);
+      if (error) throw error;
+      fetchSettings();
+    } catch (error) {
+      alert(`Error adding size: ${error.message}`);
+    }
+  };
+
+  const handleDeleteSize = async (name) => {
+    try {
+      const { error } = await supabase.from('sizes').delete().eq('name', name);
+      if (error) throw error;
+      fetchSettings();
+    } catch (error) {
+      alert(`Error deleting size: ${error.message}`);
+    }
+  };
 
   const fetchItems = async () => {
     try {
@@ -71,6 +112,7 @@ function App() {
 
   useEffect(() => {
     fetchItems();
+    fetchSettings();
   }, []);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -126,7 +168,7 @@ function App() {
       setIsModalOpen(false);
     } catch (error) {
       console.error('Error saving item:', error.message);
-      alert('Failed to save item. Please try again.');
+      alert(`Failed to save item: ${error.message}`);
     }
   };
 
@@ -256,9 +298,11 @@ function App() {
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
         categories={categories}
-        setCategories={setCategories}
+        onAddCategory={handleAddCategory}
+        onDeleteCategory={handleDeleteCategory}
         sizes={sizes}
-        setSizes={setSizes}
+        onAddSize={handleAddSize}
+        onDeleteSize={handleDeleteSize}
       />
     </div>
   );

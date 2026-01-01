@@ -6,9 +6,11 @@ export function SettingsModal({
   isOpen, 
   onClose, 
   categories, 
-  setCategories, 
+  onAddCategory, 
+  onDeleteCategory,
   sizes, 
-  setSizes 
+  onAddSize,
+  onDeleteSize
 }) {
   const [newCategory, setNewCategory] = useState('');
   const [newSize, setNewSize] = useState('');
@@ -16,31 +18,31 @@ export function SettingsModal({
 
   if (!isOpen) return null;
 
-  const handleAddCategory = (e) => {
+  const handleAddCat = (e) => {
     e.preventDefault();
-    if (newCategory.trim() && !categories.includes(newCategory.trim())) {
-      setCategories([...categories, newCategory.trim()]);
+    if (newCategory.trim()) {
+      onAddCategory(newCategory.trim());
       setNewCategory('');
     }
   };
 
-  const handleDeleteCategory = (cat) => {
+  const handleDeleteCat = (cat) => {
     if (confirm(`Are you sure you want to delete "${cat}"?`)) {
-      setCategories(categories.filter(c => c !== cat));
+      onDeleteCategory(cat);
     }
   };
 
-  const handleAddSize = (e) => {
+  const handleAddSz = (e) => {
     e.preventDefault();
-    if (newSize.trim() && !sizes.includes(newSize.trim())) {
-      setSizes([...sizes, newSize.trim()]);
+    if (newSize.trim()) {
+      onAddSize(newSize.trim());
       setNewSize('');
     }
   };
 
-  const handleDeleteSize = (s) => {
+  const handleDeleteSz = (s) => {
     if (confirm(`Are you sure you want to delete "${s}"?`)) {
-      setSizes(sizes.filter(sz => sz !== s));
+      onDeleteSize(s);
     }
   };
 
@@ -75,7 +77,7 @@ export function SettingsModal({
         <div className="p-6 overflow-y-auto max-h-[60vh]">
           {activeTab === 'categories' ? (
             <div className="flex flex-col gap-4">
-              <form onSubmit={handleAddCategory} className="flex gap-2">
+              <form onSubmit={handleAddCat} className="flex gap-2">
                 <input 
                   type="text" 
                   value={newCategory}
@@ -92,7 +94,7 @@ export function SettingsModal({
                   <div key={cat} className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                     <span className="font-medium text-slate-700 dark:text-slate-200">{cat}</span>
                     <button 
-                      onClick={() => handleDeleteCategory(cat)}
+                      onClick={() => handleDeleteCat(cat)}
                       className="text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                     >
                       <Trash2 size={18} />
@@ -103,7 +105,7 @@ export function SettingsModal({
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              <form onSubmit={handleAddSize} className="flex gap-2">
+              <form onSubmit={handleAddSz} className="flex gap-2">
                 <input 
                   type="text" 
                   value={newSize}
@@ -120,7 +122,7 @@ export function SettingsModal({
                   <div key={size} className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                     <span className="font-medium text-slate-700 dark:text-slate-200">{size}</span>
                     <button 
-                      onClick={() => handleDeleteSize(size)}
+                      onClick={() => handleDeleteSz(size)}
                       className="text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                     >
                       <Trash2 size={18} />
@@ -140,7 +142,9 @@ SettingsModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   categories: PropTypes.array.isRequired,
-  setCategories: PropTypes.func.isRequired,
+  onAddCategory: PropTypes.func.isRequired,
+  onDeleteCategory: PropTypes.func.isRequired,
   sizes: PropTypes.array.isRequired,
-  setSizes: PropTypes.func.isRequired,
+  onAddSize: PropTypes.func.isRequired,
+  onDeleteSize: PropTypes.func.isRequired,
 };
