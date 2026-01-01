@@ -134,13 +134,21 @@ function App() {
       if (exists) {
         return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
       }
-      return [...prev, { ...item, quantity: 1 }];
+      return [...prev, { ...item, quantity: 1, discount: 0 }];
     });
     // Optional: Show a toast/feedback
   };
 
   const handleUpdateInvoiceQuantity = (id, newQty) => {
     setInvoiceItems(prev => prev.map(item => item.id === id ? { ...item, quantity: newQty } : item));
+  };
+
+  const handleUpdateInvoiceDiscount = (id, newDiscount) => {
+    // Store as string to allow typing (e.g. empty string or "1.")
+    // We will parse it for calculations
+    if (newDiscount === '' || /^\d*\.?\d*$/.test(newDiscount)) {
+      setInvoiceItems(prev => prev.map(item => item.id === id ? { ...item, discount: newDiscount } : item));
+    }
   };
 
   const handleRemoveFromInvoice = (id) => {
@@ -370,6 +378,7 @@ function App() {
         onClose={() => setIsInvoiceOpen(false)}
         invoiceItems={invoiceItems}
         updateQuantity={handleUpdateInvoiceQuantity}
+        updateDiscount={handleUpdateInvoiceDiscount}
         removeFromInvoice={handleRemoveFromInvoice}
         clearInvoice={handleClearInvoice}
       />
