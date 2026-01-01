@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import { Tag, Edit, Trash2 } from 'lucide-react';
+import { Tag, Edit, Trash2, ShoppingCart } from 'lucide-react';
 
-export function ItemCard({ item, onEdit, onDelete }) {
+export function ItemCard({ item, onEdit, onDelete, onAddToInvoice }) {
   // Determine color badge based on category
   const getCategoryColor = (cat) => {
     const colors = {
@@ -21,10 +21,19 @@ export function ItemCard({ item, onEdit, onDelete }) {
           {item.category}
         </span>
         <div className="flex gap-2">
+          <button 
+            className="p-2 rounded-md text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-slate-700 transition-colors"
+            onClick={() => onAddToInvoice(item)} 
+            aria-label="Add to Invoice"
+            title="Add to Invoice"
+          >
+            <ShoppingCart size={16} />
+          </button>
            <button 
             className="p-2 rounded-md text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
             onClick={() => onEdit(item)} 
             aria-label="Edit Item"
+            title="Edit Item"
           >
             <Edit size={16} />
           </button>
@@ -32,6 +41,7 @@ export function ItemCard({ item, onEdit, onDelete }) {
             className="p-2 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 transition-colors"
             onClick={() => onDelete(item.id)} 
             aria-label="Delete Item"
+            title="Delete Item"
           >
             <Trash2 size={16} />
           </button>
@@ -63,4 +73,5 @@ ItemCard.propTypes = {
   }).isRequired,
   onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  onAddToInvoice: PropTypes.func.isRequired,
 };

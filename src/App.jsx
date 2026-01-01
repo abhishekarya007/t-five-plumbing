@@ -1,10 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Package, Search, Plus, Moon, Sun, Settings } from 'lucide-react';
+import { Package, Search, Plus, Moon, Sun, Settings, ShoppingCart } from 'lucide-react';
 import { supabase } from './supabaseClient';
 import { ItemCard } from './components/ItemCard';
 import { Modal } from './components/Modal';
 import { ItemForm } from './components/ItemForm';
 import { SettingsModal } from './components/SettingsModal';
+import { InvoiceModal } from './components/InvoiceModal';
 import { CATEGORIES as DEFAULT_CATEGORIES, SIZES as DEFAULT_SIZES } from './data/mockData';
 
 function App() {
@@ -121,7 +122,34 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+
+  // Invoice State
+  const [invoiceItems, setInvoiceItems] = useState([]);
+
+  const handleAddToInvoice = (item) => {
+    setInvoiceItems(prev => {
+      const exists = prev.find(i => i.id === item.id);
+      if (exists) {
+        return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
+      }
+      return [...prev, { ...item, quantity: 1 }];
+    });
+    // Optional: Show a toast/feedback
+  };
+
+  const handleUpdateInvoiceQuantity = (id, newQty) => {
+    setInvoiceItems(prev => prev.map(item => item.id === id ? { ...item, quantity: newQty } : item));
+  };
+
+  const handleRemoveFromInvoice = (id) => {
+    setInvoiceItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const handleClearInvoice = () => {
+    setInvoiceItems([]);
+  };
 
   const handleAddItem = () => {
     setEditingItem(null);
@@ -197,7 +225,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-10 shadow-sm transition-colors duration-300">
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-10 shadow-sm transition-colors duration-300 print:hidden">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3 text-primary dark:text-sky-400">
             <Package size={28} strokeWidth={2.5} />
@@ -220,6 +248,19 @@ function App() {
               {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
             </button>
 
+            <button 
+              className="btn bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/30 dark:text-sky-300 relative" 
+              onClick={() => setIsInvoiceOpen(true)}
+            >
+              <ShoppingCart size={20} />
+              <span className="hidden sm:inline">Invoice</span>
+              {invoiceItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white dark:border-slate-800">
+                  {invoiceItems.reduce((acc, item) => acc + item.quantity, 0)}
+                </span>
+              )}
+            </button>
+
             <button className="btn btn-primary" onClick={handleAddItem}>
               <Plus size={20} />
               <span>Add Item</span>
@@ -229,7 +270,7 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 flex-1">
+      <main className="container mx-auto px-4 py-8 flex-1 print:hidden">
         
         {/* Search & Filter Section */}
         <div className="card mb-8 flex flex-wrap gap-4 items-center justify-between dark:bg-slate-800 dark:border-slate-700 transition-colors duration-300">
@@ -282,7 +323,13 @@ function App() {
             </div>
           ) : filteredItems.length > 0 ? (
             filteredItems.map(item => (
-              <ItemCard key={item.id} item={item} onEdit={handleEditItem} onDelete={handleDeleteItem} />
+              <ItemCard 
+                key={item.id} 
+                item={item} 
+                onEdit={handleEditItem} 
+                onDelete={handleDeleteItem} 
+                onAddToInvoice={handleAddToInvoice}
+              />
             ))
           ) : (
             <div className="col-span-full py-16 text-center text-slate-400">
@@ -316,6 +363,15 @@ function App() {
         sizes={sizes}
         onAddSize={handleAddSize}
         onDeleteSize={handleDeleteSize}
+      />
+
+      <InvoiceModal 
+        isOpen={isInvoiceOpen}
+        onClose={() => setIsInvoiceOpen(false)}
+        invoiceItems={invoiceItems}
+        updateQuantity={handleUpdateInvoiceQuantity}
+        removeFromInvoice={handleRemoveFromInvoice}
+        clearInvoice={handleClearInvoice}
       />
     </div>
   );
