@@ -24,14 +24,6 @@ export function InvoiceModal({ isOpen, onClose, invoiceItems, updateQuantity, up
         <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 print:bg-white print:border-b-2 print:border-black">
           <h2 className="text-xl font-bold text-slate-900 dark:text-white print:text-3xl print:text-black">Invoice / Estimate</h2>
           <div className="flex gap-2 print:hidden">
-            <button 
-              onClick={handlePrint}
-              className="btn btn-primary"
-              title="Print Invoice"
-            >
-              <Printer size={20} />
-              <span className="hidden sm:inline">Print</span>
-            </button>
             <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" onClick={onClose}>
               <X size={24} />
             </button>
@@ -49,7 +41,7 @@ export function InvoiceModal({ isOpen, onClose, invoiceItems, updateQuantity, up
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 placeholder="Enter customer name"
-                className="input-field print:border-none print:p-0 print:font-bold print:text-lg print:placeholder-transparent"
+                className="input-field dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400 focus:dark:border-sky-500 focus:dark:ring-sky-500/20 print:border-none print:p-0 print:font-bold print:text-lg print:placeholder-transparent"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -58,7 +50,7 @@ export function InvoiceModal({ isOpen, onClose, invoiceItems, updateQuantity, up
                 type="date" 
                 value={invoiceDate}
                 onChange={(e) => setInvoiceDate(e.target.value)}
-                className="input-field print:border-none print:p-0"
+                className="input-field dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:dark:border-sky-500 focus:dark:ring-sky-500/20 print:border-none print:p-0"
               />
             </div>
           </div>
