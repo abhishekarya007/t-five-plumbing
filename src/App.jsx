@@ -1,10 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Package, Search, Plus, Moon, Sun, Settings } from 'lucide-react';
+import { supabase } from './supabaseClient';
 import { ItemCard } from './components/ItemCard';
 import { Modal } from './components/Modal';
 import { ItemForm } from './components/ItemForm';
 import { SettingsModal } from './components/SettingsModal';
-import { plumbingItems, CATEGORIES as DEFAULT_CATEGORIES, SIZES as DEFAULT_SIZES } from './data/mockData';
+import { CATEGORIES as DEFAULT_CATEGORIES, SIZES as DEFAULT_SIZES } from './data/mockData';
 
 function App() {
   // Theme Management
@@ -48,11 +49,29 @@ function App() {
     localStorage.setItem('plumbo_sizes', JSON.stringify(sizes));
   }, [sizes]);
 
-  // Load from local storage or use mock data
-  const [items, setItems] = useState(() => {
-    const saved = localStorage.getItem('plumbo_items');
-    return saved ? JSON.parse(saved) : plumbingItems;
-  });
+  // Supabase Data Management
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchItems = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('items')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setItems(data || []);
+    } catch (error) {
+      console.error('Error fetching items:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -61,11 +80,6 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-
-  // Persist to local storage
-  useEffect(() => {
-    localStorage.setItem('plumbo_items', JSON.stringify(items));
-  }, [items]);
 
   const handleAddItem = () => {
     setEditingItem(null);
@@ -77,16 +91,43 @@ function App() {
     setIsModalOpen(true);
   };
 
-  const handleSaveItem = (itemData) => {
-    if (editingItem) {
-      // Update existing
-      setItems(items.map(i => i.id === editingItem.id ? { ...itemData, id: editingItem.id } : i));
-    } else {
-      // Create new
-      const newItem = { ...itemData, id: Date.now() };
-      setItems([newItem, ...items]);
+  const handleSaveItem = async (itemData) => {
+    try {
+      if (editingItem) {
+        // Update existing
+        const { error } = await supabase
+          .from('items')
+          .update({
+            name: itemData.name,
+            category: itemData.category,
+            size: itemData.size,
+            price: itemData.price
+          })
+          .eq('id', editingItem.id);
+
+        if (error) throw error;
+        
+        // Optimistic update or refetch
+        fetchItems();
+      } else {
+        // Create new
+        const { error } = await supabase
+          .from('items')
+          .insert([{
+            name: itemData.name,
+            category: itemData.category,
+            size: itemData.size,
+            price: itemData.price
+          }]);
+
+        if (error) throw error;
+        fetchItems();
+      }
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Error saving item:', error.message);
+      alert('Failed to save item. Please try again.');
     }
-    setIsModalOpen(false);
   };
 
   const filteredItems = useMemo(() => {
@@ -179,7 +220,12 @@ function App() {
 
         {/* Inventory Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-20">
-          {filteredItems.length > 0 ? (
+          {loading ? (
+            <div className="col-span-full py-20 text-center text-slate-400">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p>Loading inventory...</p>
+            </div>
+          ) : filteredItems.length > 0 ? (
             filteredItems.map(item => (
               <ItemCard key={item.id} item={item} onEdit={handleEditItem} />
             ))
