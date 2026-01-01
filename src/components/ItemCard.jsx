@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import { Tag, Edit } from 'lucide-react';
+import { Tag, Edit, Trash2 } from 'lucide-react';
 
-export function ItemCard({ item, onEdit }) {
+export function ItemCard({ item, onEdit, onDelete }) {
   // Determine color badge based on category
   const getCategoryColor = (cat) => {
     const colors = {
@@ -20,13 +20,22 @@ export function ItemCard({ item, onEdit }) {
         <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${getCategoryColor(item.category)} dark:opacity-90`}>
           {item.category}
         </span>
-        <button 
-          className="p-2 rounded-md text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-          onClick={() => onEdit(item)} 
-          aria-label="Edit Item"
-        >
-          <Edit size={16} />
-        </button>
+        <div className="flex gap-2">
+           <button 
+            className="p-2 rounded-md text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+            onClick={() => onEdit(item)} 
+            aria-label="Edit Item"
+          >
+            <Edit size={16} />
+          </button>
+          <button 
+            className="p-2 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 transition-colors"
+            onClick={() => onDelete(item.id)} 
+            aria-label="Delete Item"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
       </div>
       
       <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100 m-0">{item.name}</h3>
@@ -53,4 +62,5 @@ ItemCard.propTypes = {
     price: PropTypes.number.isRequired,
   }).isRequired,
   onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };

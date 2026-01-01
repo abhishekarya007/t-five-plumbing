@@ -172,6 +172,19 @@ function App() {
     }
   };
 
+  const handleDeleteItem = async (id) => {
+    if (confirm('Are you sure you want to delete this item?')) {
+      try {
+        const { error } = await supabase.from('items').delete().eq('id', id);
+        if (error) throw error;
+        fetchItems();
+      } catch (error) {
+        console.error('Error deleting item:', error.message);
+        alert(`Failed to delete item: ${error.message}`);
+      }
+    }
+  };
+
   const filteredItems = useMemo(() => {
     return items.filter(item => {
       const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -269,7 +282,7 @@ function App() {
             </div>
           ) : filteredItems.length > 0 ? (
             filteredItems.map(item => (
-              <ItemCard key={item.id} item={item} onEdit={handleEditItem} />
+              <ItemCard key={item.id} item={item} onEdit={handleEditItem} onDelete={handleDeleteItem} />
             ))
           ) : (
             <div className="col-span-full py-16 text-center text-slate-400">
