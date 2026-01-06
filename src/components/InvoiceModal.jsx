@@ -164,29 +164,34 @@ FREE HOME DELIVERY
               )}
             </tbody>
             <tfoot>
-              <tr className="border-t-2 border-slate-200 dark:border-slate-700">
-                <td colSpan="5" className="pt-4 text-right font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide text-sm">Subtotal</td>
-                <td colSpan="2" className="pt-4 text-right font-bold text-lg text-slate-700 dark:text-slate-300">
+              <tr className="border-t border-slate-200 dark:border-slate-700">
+                <td colSpan="5" className="pt-6 pb-2 text-right font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide text-sm">Subtotal</td>
+                <td colSpan="2" className="pt-6 pb-2 text-right font-bold text-lg text-slate-700 dark:text-slate-300">
                   ₹{subtotal.toFixed(2)}
                 </td>
                 <td className="print:hidden"></td>
               </tr>
               <tr>
-                <td colSpan="5" className="pt-2 text-right font-medium text-slate-500 dark:text-slate-400 text-sm">Previous Balance (+/-)</td>
-                <td colSpan="2" className="pt-2 text-right">
-                  <input
-                    type="number"
-                    value={previousBalance}
-                    onChange={(e) => setPreviousBalance(e.target.value)}
-                    placeholder="0.00"
-                    className="w-full text-right bg-transparent border-b border-dashed border-slate-300 dark:border-slate-600 focus:outline-none focus:border-primary font-medium text-slate-700 dark:text-slate-300 print:border-none print:p-0"
-                  />
+                <td colSpan="5" className="py-2 text-right font-medium text-slate-500 dark:text-slate-400 text-sm align-middle">Previous Balance (+/-)</td>
+                <td colSpan="2" className="py-2 text-right">
+                  <div className="flex justify-end print:hidden">
+                    <input
+                      type="number"
+                      value={previousBalance}
+                      onChange={(e) => setPreviousBalance(e.target.value)}
+                      placeholder="0.00"
+                      className="w-32 py-1 px-2 text-right bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-primary transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                    />
+                  </div>
+                  <div className="hidden print:block font-semibold">
+                    {previousBalance ? (parseFloat(previousBalance) < 0 ? '-' : '+') : ''} ₹{Math.abs(parseFloat(previousBalance) || 0).toFixed(2)}
+                  </div>
                 </td>
                 <td className="print:hidden"></td>
               </tr>
-              <tr>
-                <td colSpan="5" className="pt-4 text-right font-bold text-slate-900 dark:text-white uppercase tracking-wide text-base">Grand Total</td>
-                <td colSpan="2" className="pt-4 text-right font-bold text-2xl text-primary dark:text-sky-400 border-t border-slate-200 dark:border-slate-700 mt-2 block">
+              <tr className="border-t-2 border-slate-900 dark:border-slate-100">
+                <td colSpan="5" className="pt-6 text-right font-bold text-slate-900 dark:text-white uppercase tracking-wide text-lg">Grand Total</td>
+                <td colSpan="2" className="pt-6 text-right font-bold text-3xl text-primary dark:text-sky-400">
                   ₹{grandTotal.toFixed(2)}
                 </td>
                 <td className="print:hidden"></td>
