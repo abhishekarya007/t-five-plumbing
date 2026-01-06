@@ -104,7 +104,7 @@ export function SettingsModal({
                     <span className="font-medium text-slate-700 dark:text-slate-200">{cat}</span>
                     <button 
                       onClick={() => handleDeleteCat(cat)}
-                      className="text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                      className="text-slate-400 hover:text-red-500 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 p-1"
                     >
                       <Trash2 size={18} />
                     </button>
@@ -132,7 +132,7 @@ export function SettingsModal({
                     <span className="font-medium text-slate-700 dark:text-slate-200">{size}</span>
                     <button 
                       onClick={() => handleDeleteSz(size)}
-                      className="text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                      className="text-slate-400 hover:text-red-500 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 p-1"
                     >
                       <Trash2 size={18} />
                     </button>

@@ -273,13 +273,13 @@ function App() {
     <div className="min-h-screen flex flex-col bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
       {/* Header */}
       <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-10 shadow-sm transition-colors duration-300 print:hidden">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3 text-primary dark:text-sky-400">
-            <Package size={28} strokeWidth={2.5} />
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Plumbo Inventory</h1>
+        <div className="container mx-auto px-4 py-3 md:py-4 flex flex-wrap gap-4 justify-between items-center">
+          <div className="flex items-center gap-2 md:gap-3 text-primary dark:text-sky-400">
+            <Package size={24} strokeWidth={2.5} className="md:w-7 md:h-7" />
+            <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Plumbo</h1>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
              <button 
               onClick={() => setIsSettingsOpen(true)}
               className="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700 transition-colors"
@@ -296,7 +296,7 @@ function App() {
             </button>
 
             <button 
-              className="btn bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/30 dark:text-sky-300 relative" 
+              className="btn bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/30 dark:text-sky-300 relative px-3 md:px-4" 
               onClick={() => setIsInvoiceOpen(true)}
             >
               <ShoppingCart size={20} />
@@ -308,9 +308,9 @@ function App() {
               )}
             </button>
 
-            <button className="btn btn-primary" onClick={handleAddItem}>
+            <button className="btn btn-primary px-3 md:px-4" onClick={handleAddItem}>
               <Plus size={20} />
-              <span>Add Item</span>
+              <span className="hidden sm:inline">Add Item</span>
             </button>
           </div>
         </div>
@@ -320,24 +320,24 @@ function App() {
       <main className="container mx-auto px-4 py-8 flex-1 print:hidden">
         
         {/* Search & Filter Section */}
-        <div className="card mb-8 flex flex-wrap gap-4 items-center justify-between dark:bg-slate-800 dark:border-slate-700 transition-colors duration-300">
-          <div className="flex-1 min-w-[280px] relative">
+        <div className="card mb-8 flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between dark:bg-slate-800 dark:border-slate-700 transition-colors duration-300">
+          <div className="relative w-full md:flex-1 md:min-w-[280px]">
              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
              <input 
                type="text" 
                placeholder="Search items..." 
-               className="input-field pl-11 dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400 focus:dark:border-sky-500 focus:dark:ring-sky-500/20"
+               className="input-field pl-11 w-full dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400 focus:dark:border-sky-500 focus:dark:ring-sky-500/20"
                value={searchQuery}
                onChange={(e) => setSearchQuery(e.target.value)}
              />
           </div>
           
-          <div className="flex gap-4">
-            <div className="relative">
+          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            <div className="relative flex-1">
               <select 
                 value={selectedCategory} 
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="input-field py-3 pl-4 pr-10 appearance-none cursor-pointer hover:bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600"
+                className="input-field w-full py-3 pl-4 pr-10 appearance-none cursor-pointer hover:bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600"
               >
                 {categories.map(cat => <option key={cat} value={cat}>{cat} Categories</option>)}
               </select>
@@ -346,11 +346,11 @@ function App() {
               </div>
             </div>
 
-            <div className="relative">
+            <div className="relative flex-1">
               <select 
                 value={selectedSize} 
                 onChange={(e) => setSelectedSize(e.target.value)}
-                className="input-field py-3 pl-4 pr-10 appearance-none cursor-pointer hover:bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600"
+                className="input-field w-full py-3 pl-4 pr-10 appearance-none cursor-pointer hover:bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600"
               >
                 {sizes.map(size => <option key={size} value={size}>{size}</option>)}
               </select>

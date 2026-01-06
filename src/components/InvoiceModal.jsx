@@ -38,9 +38,9 @@ FREE HOME DELIVERY
   const grandTotal = subtotal + (parseFloat(previousBalance) || 0);
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center p-4 z-50 print:p-0 print:bg-white print:fixed print:inset-0 print:z-[100]">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-end md:items-center p-0 md:p-4 z-50 print:p-0 print:bg-white print:fixed print:inset-0 print:z-[100]">
       <div 
-        className="bg-white dark:bg-slate-800 rounded-xl w-full max-w-3xl shadow-2xl flex flex-col animate-[modal-pop_0.2s_ease-out] overflow-hidden max-h-[90vh] print:max-h-none print:rounded-none print:shadow-none print:animate-none print:w-full print:h-full" 
+        className="bg-white dark:bg-slate-800 rounded-t-xl md:rounded-xl w-full max-w-3xl shadow-2xl flex flex-col animate-[slide-up_0.3s_ease-out] md:animate-[modal-pop_0.2s_ease-out] overflow-hidden google-font h-[90vh] md:h-auto md:max-h-[90vh] print:max-h-none print:rounded-none print:shadow-none print:animate-none print:w-full print:h-full" 
         onClick={e => e.stopPropagation()}
         ref={printRef}
       >
@@ -83,7 +83,8 @@ FREE HOME DELIVERY
           </div>
 
           {/* Invoice Table */}
-          <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto -mx-6 px-6 pb-4 md:overflow-visible md:mx-0 md:px-0 md:pb-0">
+          <table className="w-full text-left border-collapse min-w-[700px] md:min-w-0">
             <thead>
               <tr className="border-b-2 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-medium text-sm">
                 <th className="py-3 px-2 w-[30%]">Item Description</th>
@@ -207,6 +208,7 @@ FREE HOME DELIVERY
               </tr>
             </tfoot>
           </table>
+          </div>
 
           {/* Terms & Conditions */}
           <div className="mt-8 break-inside-avoid">
@@ -233,9 +235,9 @@ FREE HOME DELIVERY
             </div>
           </div>
 
-          <div className="mt-8 flex justify-end gap-3 print:hidden">
+          <div className="mt-8 flex flex-wrap justify-end gap-3 print:hidden">
             <button 
-              className="btn text-red-500 hover:bg-red-50 border border-transparent hover:border-red-100"
+              className="btn text-red-500 hover:bg-red-50 border border-transparent hover:border-red-100 flex-1 md:flex-none justify-center"
               onClick={() => {
                 openConfirm({
                   title: 'Clear Invoice',
@@ -250,7 +252,7 @@ FREE HOME DELIVERY
               Clear Invoice
             </button>
              <button 
-              className="btn btn-primary"
+              className="btn btn-primary flex-1 md:flex-none justify-center"
               onClick={handlePrint}
               disabled={invoiceItems.length === 0}
             >
