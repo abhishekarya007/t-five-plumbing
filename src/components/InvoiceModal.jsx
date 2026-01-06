@@ -2,7 +2,13 @@ import { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { X, Printer, Trash2, Plus, Minus } from 'lucide-react';
 
-export function InvoiceModal({ isOpen, onClose, invoiceItems, updateQuantity, updateDiscount, removeFromInvoice, clearInvoice }) {
+export function InvoiceModal({ isOpen, onClose, invoiceItems, updateQuantity, updateDiscount, removeFromInvoice, clearInvoice, openConfirm }) {
+  // ... existing code ...
+
+  // To fix line numbers, I'll use a larger context manually or just rely on the tool finding the start.
+  // Wait, I need to check where `InvoiceModal` starts.
+  // It starts at line 5.
+
   const [customerName, setCustomerName] = useState('');
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().slice(0, 10)); // YYYY-MM-DD
   const [previousBalance, setPreviousBalance] = useState('');
@@ -225,10 +231,16 @@ FREE HOME DELIVERY
           </div>
 
           <div className="mt-8 flex justify-end gap-3 print:hidden">
-             <button 
+            <button 
               className="btn text-red-500 hover:bg-red-50 border border-transparent hover:border-red-100"
               onClick={() => {
-                if(confirm('Clear all items from invoice?')) clearInvoice();
+                openConfirm({
+                  title: 'Clear Invoice',
+                  message: 'Are you sure you want to clear all items from the invoice?',
+                  destructive: true,
+                  confirmText: 'Clear All',
+                  onConfirm: clearInvoice
+                });
               }}
               disabled={invoiceItems.length === 0}
             >
@@ -257,4 +269,5 @@ InvoiceModal.propTypes = {
   updateDiscount: PropTypes.func.isRequired,
   removeFromInvoice: PropTypes.func.isRequired,
   clearInvoice: PropTypes.func.isRequired,
+  openConfirm: PropTypes.func.isRequired,
 };

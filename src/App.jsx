@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Package, Search, Plus, Moon, Sun, Settings, ShoppingCart } from 'lucide-react';
+import { Toaster, toast } from 'react-hot-toast';
 import { supabase } from './supabaseClient';
 import { ItemCard } from './components/ItemCard';
 import { Modal } from './components/Modal';
@@ -7,6 +8,7 @@ import { ItemForm } from './components/ItemForm';
 import { SettingsModal } from './components/SettingsModal';
 import { InvoiceModal } from './components/InvoiceModal';
 import { CATEGORIES as DEFAULT_CATEGORIES, SIZES as DEFAULT_SIZES } from './data/mockData';
+import { ConfirmationModal } from './components/ConfirmationModal';
 
 function App() {
   // Theme Management
@@ -60,8 +62,9 @@ function App() {
       const { error } = await supabase.from('categories').insert([{ name }]);
       if (error) throw error;
       fetchSettings();
+      toast.success('Category added successfully');
     } catch (error) {
-      alert(`Error adding category: ${error.message}`);
+      toast.error(`Error adding category: ${error.message}`);
     }
   };
 
@@ -70,8 +73,9 @@ function App() {
       const { error } = await supabase.from('categories').delete().eq('name', name);
       if (error) throw error;
       fetchSettings();
+      toast.success('Category deleted successfully');
     } catch (error) {
-      alert(`Error deleting category: ${error.message}`);
+      toast.error(`Error deleting category: ${error.message}`);
     }
   };
 
@@ -80,8 +84,9 @@ function App() {
       const { error } = await supabase.from('sizes').insert([{ name }]);
       if (error) throw error;
       fetchSettings();
+      toast.success('Size added successfully');
     } catch (error) {
-      alert(`Error adding size: ${error.message}`);
+      toast.error(`Error adding size: ${error.message}`);
     }
   };
 
@@ -90,8 +95,9 @@ function App() {
       const { error } = await supabase.from('sizes').delete().eq('name', name);
       if (error) throw error;
       fetchSettings();
+      toast.success('Size deleted successfully');
     } catch (error) {
-      alert(`Error deleting size: ${error.message}`);
+      toast.error(`Error deleting size: ${error.message}`);
     }
   };
 
@@ -125,6 +131,31 @@ function App() {
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
+  // Confirmation Modal State
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+    destructive: false,
+    confirmText: 'Confirm'
+  });
+
+  const openConfirm = ({ title, message, onConfirm, destructive = false, confirmText = 'Confirm' }) => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      onConfirm,
+      destructive,
+      confirmText
+    });
+  };
+
+  const closeConfirm = () => {
+    setConfirmModal(prev => ({ ...prev, isOpen: false }));
+  };
+
   // Invoice State
   const [invoiceItems, setInvoiceItems] = useState([]);
 
@@ -136,7 +167,7 @@ function App() {
       }
       return [...prev, { ...item, quantity: 1, discount: 0 }];
     });
-    // Optional: Show a toast/feedback
+    toast.success('Added to invoice');
   };
 
   const handleUpdateInvoiceQuantity = (id, newQty) => {
@@ -201,24 +232,32 @@ function App() {
         if (error) throw error;
         fetchItems();
       }
+      toast.success(editingItem ? 'Item updated successfully' : 'Item added successfully');
       setIsModalOpen(false);
     } catch (error) {
       console.error('Error saving item:', error.message);
-      alert(`Failed to save item: ${error.message}`);
+      toast.error(`Failed to save item: ${error.message}`);
     }
   };
 
-  const handleDeleteItem = async (id) => {
-    if (confirm('Are you sure you want to delete this item?')) {
-      try {
-        const { error } = await supabase.from('items').delete().eq('id', id);
-        if (error) throw error;
-        fetchItems();
-      } catch (error) {
-        console.error('Error deleting item:', error.message);
-        alert(`Failed to delete item: ${error.message}`);
+  const handleDeleteItem = (id) => {
+    openConfirm({
+      title: 'Delete Item',
+      message: 'Are you sure you want to delete this item? This action cannot be undone.',
+      destructive: true,
+      confirmText: 'Delete',
+      onConfirm: async () => {
+        try {
+          const { error } = await supabase.from('items').delete().eq('id', id);
+          if (error) throw error;
+          fetchItems();
+          toast.success('Item deleted successfully');
+        } catch (error) {
+          console.error('Error deleting item:', error.message);
+          toast.error(`Failed to delete item: ${error.message}`);
+        }
       }
-    }
+    });
   };
 
   const filteredItems = useMemo(() => {
@@ -371,6 +410,7 @@ function App() {
         sizes={sizes}
         onAddSize={handleAddSize}
         onDeleteSize={handleDeleteSize}
+        openConfirm={openConfirm}
       />
 
       <InvoiceModal 
@@ -381,6 +421,33 @@ function App() {
         updateDiscount={handleUpdateInvoiceDiscount}
         removeFromInvoice={handleRemoveFromInvoice}
         clearInvoice={handleClearInvoice}
+        openConfirm={openConfirm}
+      />
+      <Toaster position="bottom-right" toastOptions={{
+        className: 'dark:bg-slate-800 dark:text-white',
+        style: {
+          background: '#333',
+          color: '#fff',
+        },
+        success: {
+          style: {
+            background: 'green',
+          },
+        },
+        error: {
+          style: {
+            background: 'red',
+          },
+        },
+      }} />
+      <ConfirmationModal 
+        isOpen={confirmModal.isOpen}
+        onClose={closeConfirm}
+        onConfirm={confirmModal.onConfirm}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        destructive={confirmModal.destructive}
+        confirmText={confirmModal.confirmText}
       />
     </div>
   );

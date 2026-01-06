@@ -10,7 +10,8 @@ export function SettingsModal({
   onDeleteCategory,
   sizes, 
   onAddSize,
-  onDeleteSize
+  onDeleteSize,
+  openConfirm
 }) {
   const [newCategory, setNewCategory] = useState('');
   const [newSize, setNewSize] = useState('');
@@ -27,9 +28,13 @@ export function SettingsModal({
   };
 
   const handleDeleteCat = (cat) => {
-    if (confirm(`Are you sure you want to delete "${cat}"?`)) {
-      onDeleteCategory(cat);
-    }
+    openConfirm({
+      title: 'Delete Category',
+      message: `Are you sure you want to delete "${cat}"?`,
+      destructive: true,
+      confirmText: 'Delete',
+      onConfirm: () => onDeleteCategory(cat)
+    });
   };
 
   const handleAddSz = (e) => {
@@ -41,9 +46,13 @@ export function SettingsModal({
   };
 
   const handleDeleteSz = (s) => {
-    if (confirm(`Are you sure you want to delete "${s}"?`)) {
-      onDeleteSize(s);
-    }
+    openConfirm({
+      title: 'Delete Size',
+      message: `Are you sure you want to delete "${s}"?`,
+      destructive: true,
+      confirmText: 'Delete',
+      onConfirm: () => onDeleteSize(s)
+    });
   };
 
   return (
@@ -147,4 +156,5 @@ SettingsModal.propTypes = {
   sizes: PropTypes.array.isRequired,
   onAddSize: PropTypes.func.isRequired,
   onDeleteSize: PropTypes.func.isRequired,
+  openConfirm: PropTypes.func.isRequired,
 };
