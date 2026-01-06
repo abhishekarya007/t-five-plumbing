@@ -45,8 +45,11 @@ FREE HOME DELIVERY
         ref={printRef}
       >
         {/* Modal Header / Print Header */}
-        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 print:bg-white print:border-b-2 print:border-black">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white print:text-3xl print:text-black">Invoice / Estimate</h2>
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-start bg-slate-50 dark:bg-slate-800/50 print:bg-white print:border-b-2 print:border-black">
+          <div className="flex flex-col">
+            <h1 className="text-3xl font-extrabold text-primary dark:text-sky-400 print:text-black uppercase tracking-tight mb-1">Tfive Enterprises</h1>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white print:text-black mt-2">Invoice / Estimate</h2>
+          </div>
           <div className="flex gap-2 print:hidden">
             <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" onClick={onClose}>
               <X size={24} />
