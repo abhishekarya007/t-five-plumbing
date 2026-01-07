@@ -88,15 +88,32 @@ export function ItemForm({ initialData, onSave, onCancel, categories, sizes }) {
         />
       </div>
 
-      <div className="flex justify-end gap-3 mt-4">
+      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-4">
         <button 
           type="button" 
-          className="btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-600" 
+          className="btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-600 w-full sm:w-auto" 
           onClick={onCancel}
         >
           Cancel
         </button>
-        <button type="submit" className="btn btn-primary">
+        
+        {!initialData && (
+          <button 
+            type="button" 
+            className="btn bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/30 dark:text-sky-300 w-full sm:w-auto"
+            onClick={(e) => {
+              e.preventDefault();
+              onSave({
+                ...formData,
+                price: Number(formData.price)
+              }, false); // Pass false to keep modal open
+            }}
+          >
+            Save & Next
+          </button>
+        )}
+
+        <button type="submit" className="btn btn-primary w-full sm:w-auto">
           {initialData ? 'Update Item' : 'Add Item'}
         </button>
       </div>

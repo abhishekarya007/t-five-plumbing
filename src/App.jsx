@@ -200,7 +200,7 @@ function App() {
     setIsModalOpen(true);
   };
 
-  const handleSaveItem = async (itemData) => {
+  const handleSaveItem = async (itemData, closeOnSave = true) => {
     try {
       if (editingItem) {
         // Update existing
@@ -233,7 +233,9 @@ function App() {
         fetchItems();
       }
       toast.success(editingItem ? 'Item updated successfully' : 'Item added successfully');
-      setIsModalOpen(false);
+      if (closeOnSave) {
+        setIsModalOpen(false);
+      }
     } catch (error) {
       console.error('Error saving item:', error.message);
       toast.error(`Failed to save item: ${error.message}`);

@@ -38,9 +38,9 @@ FREE HOME DELIVERY
   const grandTotal = subtotal + (parseFloat(previousBalance) || 0);
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-end md:items-center p-0 md:p-4 z-50 print:p-0 print:bg-white print:fixed print:inset-0 print:z-[100]">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-end md:items-center p-0 md:p-4 z-50 print:p-0 print:bg-white print:static print:z-[100]">
       <div 
-        className="bg-white dark:bg-slate-800 rounded-t-xl md:rounded-xl w-full max-w-3xl shadow-2xl flex flex-col animate-[slide-up_0.3s_ease-out] md:animate-[modal-pop_0.2s_ease-out] overflow-hidden google-font h-[90vh] md:h-auto md:max-h-[90vh] print:max-h-none print:rounded-none print:shadow-none print:animate-none print:w-full print:h-full" 
+        className="bg-white dark:bg-slate-800 rounded-t-xl md:rounded-xl w-full max-w-3xl shadow-2xl flex flex-col animate-[slide-up_0.3s_ease-out] md:animate-[modal-pop_0.2s_ease-out] overflow-hidden google-font h-[90vh] md:h-auto md:max-h-[90vh] print:max-h-none print:rounded-none print:shadow-none print:animate-none print:w-full print:h-auto print:static" 
         onClick={e => e.stopPropagation()}
         ref={printRef}
       >
@@ -83,8 +83,8 @@ FREE HOME DELIVERY
           </div>
 
           {/* Invoice Table */}
-          <div className="overflow-x-auto -mx-6 px-6 pb-4 md:overflow-visible md:mx-0 md:px-0 md:pb-0">
-          <table className="w-full text-left border-collapse min-w-[700px] md:min-w-0">
+          <div className="overflow-x-auto -mx-6 px-6 pb-4 md:overflow-visible md:mx-0 md:px-0 md:pb-0 print:overflow-visible print:mx-0 print:px-0 print:pb-0">
+          <table className="w-full text-left border-collapse min-w-[700px] md:min-w-0 print:min-w-0">
             <thead>
               <tr className="border-b-2 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-medium text-sm">
                 <th className="py-3 px-2 w-[30%]">Item Description</th>
@@ -123,7 +123,7 @@ FREE HOME DELIVERY
                   return (
                     <tr key={item.id} className="border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-800/50 print:hover:bg-transparent">
                       <td className="py-3 px-2 font-medium">
-                        {item.name} <span className="text-xs text-slate-400 font-normal ml-2">({item.category})</span>
+                        {item.name}
                       </td>
                       <td className="py-3 px-2 text-center text-sm">{item.size}</td>
                       <td className="py-3 px-2 text-center text-slate-500">₹{item.price}</td>
@@ -173,7 +173,7 @@ FREE HOME DELIVERY
                 })
               )}
             </tbody>
-            <tfoot>
+            <tfoot className="print:table-row-group">
               <tr className="border-t border-slate-200 dark:border-slate-700">
                 <td colSpan="5" className="pt-6 pb-2 text-right font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide text-sm">Subtotal</td>
                 <td colSpan="2" className="pt-6 pb-2 text-right font-bold text-lg text-slate-700 dark:text-slate-300">
